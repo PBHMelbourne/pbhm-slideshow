@@ -67,9 +67,38 @@
 
 <script>
     const DROPBOX_APP_KEY = "pcv91jk9ekwg3k5";
+    const REDIRECT_URI = "https://pbhmelbourne.github.io/pbhm-slideshow/";
 
-    document.getElementById("connect").addEventListener("click", () => {
-        alert("Dropbox connection will be added in the next step.");
+    function generateCodeVerifier() {
+        const array = new Uint8Array(64);
+        crypto.getRandomValues(array);
+        return Array.from(array, byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function generateCodeChallenge(verifier) {
+        const data = new TextEncoder().encode(verifier);
+        const digest = await crypto.subtle.digest("SHA-256", data);
+        return btoa(String.fromCharCode(...new Uint8Array(digest)))
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=+$/, "");
+    }
+
+    document.getElementById("connect").addEventListener("click", async () => {
+        const verifier = generateCodeVerifier();
+        const challenge = await generateCodeChallenge(verifier);
+
+        sessionStorage.setItem("dropbox_code_verifier", verifier);
+
+        const authUrl =
+            "https://www.dropbox.com/oauth2/authorize" +
+            "?client_id=" + encodeURIComponent(DROPBOX_APP_KEY) +
+            "&response_type=code" +
+            "&code_challenge=" + encodeURIComponent(challenge) +
+            "&code_challenge_method=S256" +
+            "&redirect_uri=" + encodeURIComponent(REDIRECT_URI);
+
+        window.location.href = authUrl;
     });
 </script>
 
