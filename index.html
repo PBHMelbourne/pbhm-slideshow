@@ -166,38 +166,37 @@
                 await getPhotos();
 
 
-            const existingPaths =
-                new Set(
-                    images.map(
-                        photo =>
-                            photo.path_lower
-                    )
+            const wasEmpty =
+                images.length === 0;
+
+
+            images =
+                newImages;
+
+
+            if (
+                wasEmpty &&
+                images.length > 0
+            ) {
+
+                document.getElementById(
+                    "status"
+                ).classList.add(
+                    "hidden"
                 );
 
 
-            const addedImages =
-                newImages.filter(
-                    photo =>
-                        !existingPaths.has(
-                            photo.path_lower
-                        )
-                );
+                currentIndex = 0;
 
 
-            if (addedImages.length > 0) {
+                await displayNextPhoto();
 
-                console.log(
-                    "New photos detected:",
-                    addedImages.length
-                );
 
-                images =
-                    newImages;
-
-            } else {
-
-                images =
-                    newImages;
+                slideshowTimer =
+                    setInterval(
+                        displayNextPhoto,
+                        8000
+                    );
 
             }
 
@@ -237,6 +236,14 @@
                 status.textContent =
                     "Waiting for photos...";
 
+
+                refreshTimer =
+                    setInterval(
+                        refreshImages,
+                        10000
+                    );
+
+
                 return;
 
             }
@@ -250,11 +257,11 @@
             await displayNextPhoto();
 
 
-slideshowTimer =
-    setInterval(
-        displayNextPhoto,
-        8000
-    );
+            slideshowTimer =
+                setInterval(
+                    displayNextPhoto,
+                    8000
+                );
 
 
             refreshTimer =
