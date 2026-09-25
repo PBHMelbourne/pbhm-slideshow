@@ -23,7 +23,7 @@
             align-items: center;
             justify-content: center;
             background-image: url("background.png.png");
-            background-size: cover;
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
@@ -250,11 +250,11 @@
             await displayNextPhoto();
 
 
-            slideshowTimer =
-                setInterval(
-                    displayNextPhoto,
-                    5000
-                );
+slideshowTimer =
+    setInterval(
+        displayNextPhoto,
+        8000
+    );
 
 
             refreshTimer =
