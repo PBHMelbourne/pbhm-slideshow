@@ -149,7 +149,7 @@
         Loading photos...
     </div>
 
-<img id="photo" src="" alt="" style="display:none;">
+<img id="photo" src="" alt="">
 
     <button id="fullscreenButton">
         Enter Full Screen
@@ -226,13 +226,9 @@
         currentIndex++;
 
 
-const photoElement = document.getElementById("photo");
-
-photoElement.onload = function () {
-    photoElement.style.display = "block";
-};
-
-photoElement.src = photo.link;
+document.getElementById(
+    "photo"
+).src = photo.link;
 
     }
 
