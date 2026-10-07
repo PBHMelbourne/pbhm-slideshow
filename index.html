@@ -16,14 +16,60 @@
             font-family: Arial, sans-serif;
         }
 
-        #slideshow {
+        #passwordScreen {
             width: 100vw;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-background-image: url("client-background.jpg");
-background-size: contain;
+            background: #000;
+        }
+
+        #passwordBox {
+            text-align: center;
+            color: white;
+        }
+
+        #passwordBox h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        #passwordInput {
+            width: 260px;
+            max-width: 80vw;
+            padding: 12px;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        #passwordButton {
+            margin-top: 12px;
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background: #7f61ff;
+            color: white;
+        }
+
+        #passwordError {
+            margin-top: 12px;
+            color: #ff8080;
+            display: none;
+        }
+
+        #slideshow {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-image: url("client-background.jpg");
+            background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
@@ -62,10 +108,7 @@ background-size: contain;
             z-index: 10;
         }
 
-        #status.hidden {
-            display: none;
-        }
-
+        #status.hidden,
         #fullscreenButton.hidden {
             display: none;
         }
@@ -73,6 +116,32 @@ background-size: contain;
 </head>
 
 <body>
+
+<div id="passwordScreen">
+    <div id="passwordBox">
+        <h1>Enter Event Password</h1>
+
+        <form id="passwordForm">
+            <input
+                id="passwordInput"
+                type="password"
+                autocomplete="off"
+                placeholder="Password"
+                required
+            >
+
+            <br>
+
+            <button id="passwordButton" type="submit">
+                Enter Slideshow
+            </button>
+        </form>
+
+        <div id="passwordError">
+            Incorrect password.
+        </div>
+    </div>
+</div>
 
 <div id="slideshow">
 
@@ -93,6 +162,8 @@ background-size: contain;
     const WORKER_URL =
         "https://pbhm-slideshow-api.orange-heart-72cd.workers.dev/photos?event=ferguson-plarre";
 
+    let slideshowPassword = "";
+
     let images = [];
 
     let currentIndex = 0;
@@ -105,7 +176,11 @@ background-size: contain;
     async function getPhotos() {
 
         const response =
-            await fetch(WORKER_URL);
+            await fetch(WORKER_URL, {
+                headers: {
+                    "X-Slideshow-Password": slideshowPassword
+                }
+            });
 
         const data =
             await response.json();
@@ -200,7 +275,6 @@ background-size: contain;
 
             }
 
-
         } catch (error) {
 
             console.error(
@@ -270,7 +344,6 @@ background-size: contain;
                     10000
                 );
 
-
         } catch (error) {
 
             status.textContent =
@@ -283,6 +356,69 @@ background-size: contain;
         }
 
     }
+
+
+    document.getElementById(
+        "passwordForm"
+    ).addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const passwordInput =
+                document.getElementById(
+                    "passwordInput"
+                );
+
+
+            const passwordError =
+                document.getElementById(
+                    "passwordError"
+                );
+
+
+            slideshowPassword =
+                passwordInput.value;
+
+
+            passwordError.style.display =
+                "none";
+
+
+            try {
+
+                await getPhotos();
+
+
+                document.getElementById(
+                    "passwordScreen"
+                ).style.display =
+                    "none";
+
+
+                document.getElementById(
+                    "slideshow"
+                ).style.display =
+                    "flex";
+
+
+                await startSlideshow();
+
+            } catch (error) {
+
+                slideshowPassword = "";
+
+                passwordError.style.display =
+                    "block";
+
+                passwordInput.select();
+
+            }
+
+        }
+    );
 
 
     document.getElementById(
@@ -336,9 +472,6 @@ background-size: contain;
 
         }
     );
-
-
-    startSlideshow();
 
 </script>
 
