@@ -408,7 +408,13 @@
 
 } catch (error) {
 
+    console.error("Password/API error:", error);
+
     slideshowPassword = "";
+
+    passwordError.textContent =
+        error.message ||
+        "Unable to connect to the slideshow.";
 
     passwordError.style.display =
         "block";
