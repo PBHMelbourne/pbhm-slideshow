@@ -226,9 +226,13 @@
         currentIndex++;
 
 
-        document.getElementById(
-            "photo"
-        ).src = photo.link;
+const photoElement = document.getElementById("photo");
+
+photoElement.onload = function () {
+    photoElement.style.display = "block";
+};
+
+photoElement.src = photo.link;
 
     }
 
